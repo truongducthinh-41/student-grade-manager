@@ -1,0 +1,12 @@
+# Bỏ qua các file thực thi và file trung gian của C++
+*.exe
+*.obj
+*.dll
+*.lib
+
+# Bỏ qua file xuất báo cáo hoặc data local nếu có sinh ra
+*.txt
+*.csv
+
+# Bỏ qua thư mục cấu hình của trình biên tập (tùy chọn)
+.vscode/
