@@ -21,11 +21,11 @@ public:
     bool connect(const std::string& connectionString);
     void disconnect();
     
-    // Các hàm ánh xạ chức năng cốt lõi
-    bool loadStudents(std::vector<Student>& students);
-    bool insertStudent(const Student& s);
-    bool updateStudent(const Student& s);
-    bool deleteStudent(const std::string& id);
+    // Ánh xạ các chức năng theo schema mới
+    bool loadSinhVien(std::vector<SinhVien>& students);
+    bool insertSinhVien(const SinhVien& s);
+    bool updateSinhVien(const SinhVien& s);
+    bool deleteSinhVien(const std::string& maSV);
 };
 
 #endif

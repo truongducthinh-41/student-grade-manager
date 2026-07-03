@@ -1,50 +1,10 @@
-#include "database.h"
-#include <iostream>
-
-Database::Database() : hEnv(SQL_NULL_HENV), hDbc(SQL_NULL_HDBC), hStmt(SQL_NULL_HSTMT), connected(false) {}
-
-Database::~Database() {
-    disconnect();
-}
-
-bool Database::connect(const std::string& connectionString) {
-    // 1. Cấp phát môi trường (Environment Handle)
-    SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &hEnv);
-    SQLSetEnvAttr(hEnv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0);
-    
-    // 2. Cấp phát kết nối (Connection Handle)
-    SQLAllocHandle(SQL_HANDLE_DBC, hEnv, &hDbc);
-    
-    // 3. Kết nối bằng Connection String
-    SQLCHAR outConnStr[1024];
-    SQLSMALLINT outConnStrLen;
-    SQLRETURN ret = SQLDriverConnectA(hDbc, NULL, (SQLCHAR*)connectionString.c_str(), SQL_NTS,
-                                      outConnStr, sizeof(outConnStr), &outConnStrLen, SQL_DRIVER_NOPROMPT);
-    
-    if (SQL_SUCCEEDED(ret)) {
-        connected = true;
-        return true;
-    }
-    return false;
-}
-
-void Database::disconnect() {
-    if (hStmt != SQL_NULL_HSTMT) SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
-    if (connected && hDbc != SQL_NULL_HDBC) {
-        SQLDisconnect(hDbc);
-        SQLFreeHandle(SQL_HANDLE_DBC, hDbc);
-    }
-    if (hEnv != SQL_NULL_HENV) SQLFreeHandle(SQL_HANDLE_ENV, hEnv);
-    connected = false;
-}
-
-// Hàm SELECT dữ liệu từ SQL Server đổ vào vector C++
-bool Database::loadStudents(std::vector<Student>& students) {
+bool Database::loadSinhVien(std::vector<SinhVien>& students) {
     if (!connected) return false;
     students.clear();
     
     SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt);
-    std::string query = "SELECT MSSV, HoTen, DiemToan, DiemLy, DiemHoa, DiemTB, HocLuc FROM SinhVien";
+    // Query theo cấu trúc mới
+    std::string query = "SELECT MaSV, HoTen, NgaySinh, GioiTinh, DiaChi, MaLop FROM SinhVien";
     
     SQLRETURN ret = SQLExecDirectA(hStmt, (SQLCHAR*)query.c_str(), SQL_NTS);
     if (!SQL_SUCCEEDED(ret)) {
@@ -52,31 +12,28 @@ bool Database::loadStudents(std::vector<Student>& students) {
         return false;
     }
     
-    // Khai báo biến tạm hứng dữ liệu trả về từ SQL Server
-    char szId[20], szName[100], szHocLuc[20];
-    double dToan, dLy, dHoa, dTB;
-    SQLLEN cbId, cbName, cbToan, cbLy, cbHoa, cbTB, cbHocLuc;
+    // Khai báo biến tạm
+    char szMaSV[20], szHoTen[100], szNgaySinh[15], szDiaChi[255], szMaLop[20];
+    SQLCHAR cGioiTinh; 
+    SQLLEN cbMaSV, cbHoTen, cbNgaySinh, cbGioiTinh, cbDiaChi, cbMaLop;
     
-    // Duyệt qua từng dòng dữ liệu thu được (Result Set)
     while (SQLFetch(hStmt) == SQL_SUCCESS) {
-        SQLGetData(hStmt, 1, SQL_C_CHAR, szId, sizeof(szId), &cbId);
-        SQLGetData(hStmt, 2, SQL_C_CHAR, szName, sizeof(szName), &cbName);
-        SQLGetData(hStmt, 3, SQL_C_DOUBLE, &dToan, 0, &cbToan);
-        SQLGetData(hStmt, 4, SQL_C_DOUBLE, &dLy, 0, &cbLy);
-        SQLGetData(hStmt, 5, SQL_C_DOUBLE, &dHoa, 0, &cbHoa);
-        SQLGetData(hStmt, 6, SQL_C_DOUBLE, &dTB, 0, &cbTB);
-        SQLGetData(hStmt, 7, SQL_C_CHAR, szHocLuc, sizeof(szHocLuc), &cbHocLuc);
+        SQLGetData(hStmt, 1, SQL_C_CHAR, szMaSV, sizeof(szMaSV), &cbMaSV);
+        SQLGetData(hStmt, 2, SQL_C_CHAR, szHoTen, sizeof(szHoTen), &cbHoTen);
+        SQLGetData(hStmt, 3, SQL_C_CHAR, szNgaySinh, sizeof(szNgaySinh), &cbNgaySinh);
+        SQLGetData(hStmt, 4, SQL_C_BIT, &cGioiTinh, 0, &cbGioiTinh);
+        SQLGetData(hStmt, 5, SQL_C_CHAR, szDiaChi, sizeof(szDiaChi), &cbDiaChi);
+        SQLGetData(hStmt, 6, SQL_C_CHAR, szMaLop, sizeof(szMaLop), &cbMaLop);
         
-        Student s;
-        s.id = szId;
-        s.name = szName; // Lưu ý: Do SQL Server dùng NVARCHAR trả về UTF-8/hoặc mã hóa Windows, cần xử lý đồng bộ chuỗi
-        s.diemToan = dToan;
-        s.diemLy = dLy;
-        s.diemHoa = dHoa;
-        s.diemTB = dTB;
-        s.hocLuc = szHocLuc;
+        SinhVien sv;
+        sv.MaSV = (cbMaSV == SQL_NULL_DATA) ? "" : szMaSV;
+        sv.HoTen = (cbHoTen == SQL_NULL_DATA) ? "" : szHoTen;
+        sv.NgaySinh = (cbNgaySinh == SQL_NULL_DATA) ? "" : szNgaySinh;
+        sv.GioiTinh = (cbGioiTinh == SQL_NULL_DATA) ? false : (cGioiTinh != 0);
+        sv.DiaChi = (cbDiaChi == SQL_NULL_DATA) ? "" : szDiaChi;
+        sv.MaLop = (cbMaLop == SQL_NULL_DATA) ? "" : szMaLop;
         
-        students.push_back(s);
+        students.push_back(sv);
     }
     
     SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
