@@ -10,17 +10,28 @@ struct SinhVien {
     string MaSV;
     string HoTen;
     string NgaySinh;
-    bool GioiTinh; // BIT trong SQL ánh xạ sang bool
+    bool GioiTinh; 
     string DiaChi;
     string MaLop;
 };
 
-// Nếu muốn quản lý thêm điểm, bạn có thể tạo thêm struct Diem, MonHoc...
+struct MonHoc {
+    string MaMH;
+    string TenMH;
+    int SoTinChi;
+};
+
 struct Diem {
     string MaSV;
     string MaMH;
     int LanThi;
     double DiemSo;
+};
+
+struct LopHoc {
+    string MaLop;
+    string TenLop;
+    string Khoa;
 };
 
 #endif

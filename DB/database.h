@@ -21,7 +21,7 @@ public:
     bool connect(const std::string& connectionString);
     void disconnect();
     
-    // Ánh xạ các chức năng theo schema mới
+    // Trong database.h
     bool loadSinhVien(std::vector<SinhVien>& students);
     bool insertSinhVien(const SinhVien& s);
     bool updateSinhVien(const SinhVien& s);
