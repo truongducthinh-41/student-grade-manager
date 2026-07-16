@@ -43,9 +43,9 @@ int main() {
     vector<SinhVien> students;
     int choice;
     Database db;
-    
+
     // Đã cập nhật chuỗi kết nối sang DATABASE=QuanLyDiemSinhVien
-    string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEXPRESS;DATABASE=QuanLyDiemSinhVien;Trusted_Connection=yes;";
+    string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEXPRESS;DATABASE=QuanLySinhVien;Trusted_Connection=yes;";
     
     cout << "[Hệ thống] Đang kết nối tới cơ sở dữ liệu SQL Server...\n";
     if (db.connect(connStr)) {
