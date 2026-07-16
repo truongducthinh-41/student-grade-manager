@@ -74,17 +74,30 @@ double inputValidGrade(const string &prompt) {
     double val;
     while (true) {
         cout << prompt;
-        if (cin >> val) {
+        string input;
+        getline(cin, input);
+        
+        // Loại bỏ khoảng trắng
+        size_t first = input.find_first_not_of(" \t\r\n");
+        if (first == string::npos) {
+            return 0.0; // Trống -> mặc định = 0
+        }
+        size_t last = input.find_last_not_of(" \t\r\n");
+        input = input.substr(first, (last - first + 1));
+        
+        if (toLowerCase(input) == "none") {
+            return 0.0; // "none" -> mặc định = 0
+        }
+        
+        try {
+            val = stod(input);
             if (val >= 0.0 && val <= 10.0) {
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 return val;
             } else {
                 cout << "Lỗi: Điểm phải nằm trong khoảng từ 0.0 đến 10.0. Vui lòng nhập lại!\n";
             }
-        } else {
+        } catch (...) {
             cout << "Lỗi: Nhập sai định dạng số. Vui lòng nhập lại!\n";
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
     }
 }
@@ -544,9 +557,18 @@ bool loadFromCSV(vector<Student> &students, const string &filename) {
         
         double diemToan = 0, diemLy = 0, diemHoa = 0;
         try {
-            diemToan = stod(fields[2]);
-            diemLy = stod(fields[3]);
-            diemHoa = stod(fields[4]);
+            string sToan = trim(fields[2]);
+            string sLy = trim(fields[3]);
+            string sHoa = trim(fields[4]);
+            
+            if (sToan.empty() || toLowerCase(sToan) == "none") diemToan = 0.0;
+            else diemToan = stod(sToan);
+            
+            if (sLy.empty() || toLowerCase(sLy) == "none") diemLy = 0.0;
+            else diemLy = stod(sLy);
+            
+            if (sHoa.empty() || toLowerCase(sHoa) == "none") diemHoa = 0.0;
+            else diemHoa = stod(sHoa);
         } catch (...) {
             cout << "Cảnh báo dòng " << lineNum << ": Lỗi định dạng điểm số. Dòng bị bỏ qua.\n";
             hasError = true;

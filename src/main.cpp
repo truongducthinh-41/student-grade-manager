@@ -48,16 +48,16 @@ int main() {
     // Chuỗi kết nối đến SQL Server sử dụng Windows Authentication
     // Thay DATABASE=StudentGradeManager thành DATABASE=QuanLyDiemSinhVien
 string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEXPRESS;DATABASE=QuanLyDiemSinhVien;Trusted_Connection=yes;";
-    cout << "[Hệ thống] Đang kết nối tới cơ sở dữ liệu SQL Server...\n";
+    cout << "Đang kết nối tới cơ sở dữ liệu SQL Server...\n";
     if (db.connect(connStr)) {
-        cout << "[Hệ thống] Kết nối SQL Server thành công!\n";
+        cout << "Kết nối SQL Server thành công!\n";
         if (db.loadSinhVien(students)) {
-            cout << "[Hệ thống] Tải thành công " << students.size() << " sinh viên vào bộ nhớ RAM.\n";
+            cout << "Tải thành công " << students.size() << " sinh viên vào bộ nhớ.\n";
         } else {
-            cout << "[Lỗi] Không thể tải dữ liệu từ bảng SinhVien.\n";
+            cout << "Không thể tải dữ liệu từ bảng SinhVien.\n";
         }
     } else {
-        cout << "[Thất bại] Không thể kết nối SQL Server. Vui lòng kiểm tra lại cấu hình hệ thống.\n";
+        cout << "Không thể kết nối SQL Server.\n";
         return 1;
     }
 
@@ -71,10 +71,10 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
         cout << " 4. Xóa sinh viên (theo Mã SV)\n";
         cout << " 0. Thoát chương trình và ngắt kết nối\n";
         cout << "=============================================\n";
-        cout << "[Hệ thống] Nhập lựa chọn của bạn (Số nguyên từ 0 đến 4): ";
+        cout << "Nhập lựa chọn của bạn: ";
         
         if (!(cin >> choice)) {
-            cout << "\n[Lỗi] Vui lòng chỉ nhập số nguyên hợp lệ từ 0 đến 4! Không nhập chữ cái hoặc ký tự đặc biệt.\n";
+            cout << "\nVui lòng chỉ nhập số nguyên hợp lệ từ 0 đến 4!\n";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             continue;
@@ -90,10 +90,10 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                     
                     // 1. Nhập và kiểm tra Mã Số Sinh Viên
                     while (true) {
-                        cout << "[Nhập liệu] Nhập Mã số sinh viên (Ví dụ: SV005, không quá 20 ký tự): ";
+                        cout << "Nhập Mã số sinh viên: ";
                         getline(cin, sv.MaSV);
                         if (sv.MaSV.empty()) {
-                            cout << "[Lỗi] Mã số sinh viên bắt buộc phải nhập, không được để trống!\n";
+                            cout << "Mã số sinh viên không được để trống!\n";
                             continue;
                         }
                         
@@ -106,7 +106,7 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                             }
                         }
                         if (duplicate) {
-                            cout << "[Lỗi] Mã SV '" << sv.MaSV << "' đã tồn tại trong hệ thống. Vui lòng chọn mã khác!\n";
+                            cout << "Mã SV '" << sv.MaSV << "' đã tồn tại. Vui lòng chọn mã khác!\n";
                         } else {
                             break;
                         }
@@ -114,10 +114,10 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                     
                     // 2. Nhập và kiểm tra Họ Tên
                     while (true) {
-                        cout << "[Nhập liệu] Nhập Họ và tên sinh viên (Có thể nhập tiếng Việt có dấu): ";
+                        cout << "Nhập Họ và tên: ";
                         getline(cin, sv.HoTen);
                         if (sv.HoTen.empty()) {
-                            cout << "[Lỗi] Họ và tên sinh viên không được để trống!\n";
+                            cout << "Họ và tên không được để trống!\n";
                         } else {
                             break;
                         }
@@ -125,10 +125,10 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                     
                     // 3. Nhập và kiểm tra Ngày Sinh
                     while (true) {
-                        cout << "[Nhập liệu] Nhập Ngày sinh (Định dạng mẫu: YYYY-MM-DD, Ví dụ: 2005-01-15): ";
+                        cout << "Nhập Ngày sinh (YYYY-MM-DD): ";
                         getline(cin, sv.NgaySinh);
                         if (sv.NgaySinh.length() != 10 || sv.NgaySinh[4] != '-' || sv.NgaySinh[7] != '-') {
-                            cout << "[Lỗi] Sai định dạng! Bạn phải nhập đúng chuẩn 10 ký tự: YYYY-MM-DD.\n";
+                            cout << "Sai định dạng! Yêu cầu nhập YYYY-MM-DD.\n";
                         } else {
                             break;
                         }
@@ -136,7 +136,7 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                     
                     // 4. Nhập và kiểm tra Giới Tính
                     while (true) {
-                        cout << "[Nhập liệu] Nhập Giới tính (Nhập số 1 nếu là Nam | Nhập số 0 nếu là Nữ): ";
+                        cout << "Nhập Giới tính (1: Nam, 0: Nữ): ";
                         string genderStr;
                         getline(cin, genderStr);
                         if (genderStr == "1") {
@@ -146,20 +146,20 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                             sv.GioiTinh = false;
                             break;
                         } else {
-                            cout << "[Lỗi] Dữ liệu sai! Chỉ chấp nhận ký tự số '1' hoặc '0'. Vui lòng nhập lại.\n";
+                            cout << "Chỉ chấp nhận '1' hoặc '0'.\n";
                         }
                     }
                     
                     // 5. Nhập Địa Chỉ
-                    cout << "[Nhập liệu] Nhập Địa chỉ nơi ở (Ví dụ: Quận 1, TP.HCM): ";
+                    cout << "Nhập Địa chỉ: ";
                     getline(cin, sv.DiaChi);
                     
                     // 6. Nhập và kiểm tra Mã Lớp
                     while (true) {
-                        cout << "[Nhập liệu] Nhập Mã lớp học (Phải khớp với bảng LopHoc, Ví dụ: K31PM1): ";
+                        cout << "Nhập Mã lớp học: ";
                         getline(cin, sv.MaLop);
                         if (sv.MaLop.empty()) {
-                            cout << "[Lỗi] Mã lớp không được phép để trống!\n";
+                            cout << "Mã lớp không được để trống!\n";
                         } else {
                             break;
                         }
@@ -168,9 +168,9 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                     // Thực hiện chèn xuống SQL Server trước, nếu thành công mới lưu vào RAM
                     if (db.insertSinhVien(sv)) {
                         students.push_back(sv);
-                        cout << "[Thành công] Đã thêm mới và đồng bộ sinh viên '" << sv.HoTen << "' vào CSDL!\n";
+                        cout << "Đã thêm sinh viên '" << sv.HoTen << "' vào CSDL!\n";
                     } else {
-                        cout << "[Thất bại] Không thể lưu vào SQL Server. Vui lòng kiểm tra lại tính chính xác của Mã lớp hoặc kết nối.\n";
+                        cout << "Không thể lưu vào SQL Server.\n";
                     }
                 }
                 break;
@@ -183,13 +183,13 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
             case 3:
                 // Cập nhật thông tin sinh viên dựa trên MaSV
                 {
-                    cout << "\n--- CHỨC NĂNG: CẬP NHẬT THÔNG TIN SINH VIÊN ---\n";
-                    cout << "[Nhập liệu] Nhập chính xác Mã số sinh viên (MaSV) cần sửa thông tin: ";
+                    cout << "\n--- CẬP NHẬT THÔNG TIN SINH VIÊN ---\n";
+                    cout << "Nhập Mã số sinh viên cần sửa: ";
                     string idToUpdate;
                     getline(cin, idToUpdate);
                     
                     if (idToUpdate.empty()) {
-                        cout << "[Thông báo] Mã trống. Hủy thao tác cập nhật.\n";
+                        cout << "Mã trống. Hủy thao tác cập nhật.\n";
                         break;
                     }
                     
@@ -199,25 +199,25 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                     });
                     
                     if (it != students.end()) {
-                        cout << ">> Đã tìm thấy sinh viên! Thông tin hiện tại trên hệ thống:\n";
+                        cout << ">> Đã tìm thấy sinh viên! Thông tin hiện tại:\n";
                         cout << " - Họ tên: " << it->HoTen << " | Ngày sinh: " << it->NgaySinh << " | Lớp: " << it->MaLop << "\n";
                         cout << "---------------------------------------------------------\n";
-                        cout << "(Lưu ý: Để trống và nhấn Enter nếu bạn không muốn thay đổi mục đó)\n";
+                        cout << "(Để trống và nhấn Enter nếu không thay đổi)\n";
                         
                         SinhVien updatedSV = *it;
                         
-                        cout << "[Nhập liệu] Nhập Họ và Tên mới: ";
+                        cout << "Nhập Họ và Tên mới: ";
                         string newName;
                         getline(cin, newName);
                         if (!newName.empty()) updatedSV.HoTen = newName;
                         
                         while (true) {
-                            cout << "[Nhập liệu] Nhập Ngày sinh mới (YYYY-MM-DD): ";
+                            cout << "Nhập Ngày sinh mới (YYYY-MM-DD): ";
                             string newBirth;
                             getline(cin, newBirth);
-                            if (newBirth.empty()) break; // Giữ nguyên ngày cũ
+                            if (newBirth.empty()) break;
                             if (newBirth.length() != 10 || newBirth[4] != '-' || newBirth[7] != '-') {
-                                cout << "[Lỗi] Sai cấu trúc ngày! Vui lòng điền đúng dạng YYYY-MM-DD hoặc bỏ trống.\n";
+                                cout << "Sai cấu trúc ngày! Vui lòng điền đúng YYYY-MM-DD.\n";
                             } else {
                                 updatedSV.NgaySinh = newBirth;
                                 break;
@@ -225,10 +225,10 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                         }
                         
                         while (true) {
-                            cout << "[Nhập liệu] Nhập Giới tính mới (1: Nam, 0: Nữ): ";
+                            cout << "Nhập Giới tính mới (1: Nam, 0: Nữ): ";
                             string newGender;
                             getline(cin, newGender);
-                            if (newGender.empty()) break; // Giữ nguyên
+                            if (newGender.empty()) break;
                             if (newGender == "1") {
                                 updatedSV.GioiTinh = true;
                                 break;
@@ -236,29 +236,29 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                                 updatedSV.GioiTinh = false;
                                 break;
                             } else {
-                                cout << "[Lỗi] Chỉ chấp nhận nhập '1' hoặc '0'.\n";
+                                cout << "Chỉ chấp nhận '1' hoặc '0'.\n";
                             }
                         }
                         
-                        cout << "[Nhập liệu] Nhập Địa chỉ mới: ";
+                        cout << "Nhập Địa chỉ mới: ";
                         string newAddress;
                         getline(cin, newAddress);
                         if (!newAddress.empty()) updatedSV.DiaChi = newAddress;
                         
-                        cout << "[Nhập liệu] Nhập Mã lớp học mới: ";
+                        cout << "Nhập Mã lớp học mới: ";
                         string newClass;
                         getline(cin, newClass);
                         if (!newClass.empty()) updatedSV.MaLop = newClass;
                         
                         // Đẩy dữ liệu cập nhật xuống SQL Server
                         if (db.updateSinhVien(updatedSV)) {
-                            *it = updatedSV; // Cập nhật lại biến cục bộ trên RAM
-                            cout << "[Thành công] Thông tin sinh viên " << idToUpdate << " đã được cập nhật đồng bộ CSDL!\n";
+                            *it = updatedSV;
+                            cout << "Cập nhật sinh viên " << idToUpdate << " thành công!\n";
                         } else {
-                            cout << "[Thất bại] Lỗi hệ thống. Không thể cập nhật dữ liệu. Hãy chắc chắn Mã lớp mới tồn tại.\n";
+                            cout << "Lỗi cập nhật dữ liệu.\n";
                         }
                     } else {
-                        cout << "[Thất bại] Không tìm thấy sinh viên nào có mã số '" << idToUpdate << "' trên hệ thống RAM.\n";
+                        cout << "Không tìm thấy sinh viên có mã số '" << idToUpdate << "'.\n";
                     }
                 }
                 break;
@@ -266,13 +266,13 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
             case 4:
                 // Xóa sinh viên dựa trên mã số sinh viên
                 {
-                    cout << "\n--- CHỨC NĂNG: XÓA SINH VIÊN KHỎI HỆ THỐNG ---\n";
-                    cout << "[Nhập liệu] Nhập mã số sinh viên cần xóa (Ví dụ: SV001): ";
+                    cout << "\n--- XÓA SINH VIÊN ---\n";
+                    cout << "Nhập mã số sinh viên cần xóa: ";
                     string idToDelete;
                     getline(cin, idToDelete);
                     
                     if (idToDelete.empty()) {
-                        cout << "[Thông báo] Mã trống. Hủy thao tác xóa.\n";
+                        cout << "Mã trống. Hủy thao tác xóa.\n";
                         break;
                     }
                     
@@ -285,24 +285,24 @@ string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEX
                         
                         if (it != students.end()) {
                             students.erase(it, students.end());
-                            cout << "[Thành công] Đã xóa hoàn toàn sinh viên có mã " << idToDelete << " khỏi hệ thống và bộ nhớ.\n";
+                            cout << "Đã xóa sinh viên " << idToDelete << " thành công.\n";
                         } else {
-                            cout << "[Thông báo] Đã xóa trong CSDL, dữ liệu bộ nhớ tạm thời không bị ảnh hưởng.\n";
+                            cout << "Đã xóa trong CSDL.\n";
                         }
                     } else {
-                        cout << "[Thất bại] Không thể xóa. Không tìm thấy mã số '" << idToDelete << "' hoặc sinh viên này đang có dữ liệu điểm số ràng buộc khóa ngoại trong bảng Diem.\n";
+                        cout << "Không thể xóa. Có thể lỗi ràng buộc khóa ngoại hoặc không tìm thấy.\n";
                     }
                 }
                 break;
 
             case 0:
                 db.disconnect();
-                cout << "[Hệ thống] Đã ngắt kết nối an toàn với CSDL SQL Server.\n";
-                cout << "Cảm ơn bạn đã sử dụng hệ thống quản lý sinh viên. Tạm biệt!\n";
+                cout << "Đã ngắt kết nối CSDL.\n";
+                cout << "Tạm biệt!\n";
                 break;
 
             default:
-                cout << "[Cảnh báo] Lựa chọn không nằm trong danh mục. Vui lòng chọn chính xác từ số 0 đến số 4!\n";
+                cout << "Lựa chọn không hợp lệ!\n";
                 break;
         }
     } while (choice != 0);
