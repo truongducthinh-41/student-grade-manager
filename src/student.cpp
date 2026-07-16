@@ -104,7 +104,147 @@ double inputValidGrade(const string &prompt) {
 
 // Menu điều khiển bằng tiếng Việt
 void displayMenu() {
-    cout << "\n=============================================\n";
+    cout << "\n=============#include "Student.h"
+#include "Utils.h"
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
+#include <algorithm>
+
+using namespace std;
+
+string evaluateClassification(double gpa) {
+    if (gpa >= 8.0) return "Giỏi";
+    if (gpa >= 6.5) return "Khá";
+    if (gpa >= 5.0) return "Trung bình";
+    return "Yếu";
+}
+
+void printStudentsTable(const vector<SinhVien> &students) {
+    if (students.empty()) {
+        cout << "Danh sách sinh viên trống.\n";
+        return;
+    }
+    string sep = "+--------------+------------------------------+------------+---------+----------+----------+--------------+";
+    cout << "\n" << sep << "\n";
+    cout << "| " << padRight("MSSV", 12)
+         << " | " << padRight("Họ và Tên", 28)
+         << " | " << padRight("Ngày Sinh", 10)
+         << " | " << padRight("Giới Tính", 7)
+         << " | " << padRight("Mã Lớp", 8)
+         << " | " << padRight("Điểm TB", 8)
+         << " | " << padRight("Học lực", 12) << " |\n";
+    cout << sep << "\n";
+    for (const auto& s : students) {
+        stringstream ssTB;
+        ssTB << fixed << setprecision(2) << s.diemTB;
+        cout << "| " << padRight(s.MaSV, 12)
+             << " | " << padRight(s.HoTen, 28)
+             << " | " << padRight(s.NgaySinh, 10)
+             << " | " << padRight(s.GioiTinh ? "Nam" : "Nữ", 7)
+             << " | " << padRight(s.MaLop, 8)
+             << " | " << padLeft(ssTB.str(), 8)
+             << " | " << padRight(s.hocLuc, 12) << " |\n";
+    }
+    cout << sep << "\n";
+}
+
+void sortStudentsByGPA(vector<SinhVien> &students) {
+    if (students.empty()) return;
+    sort(students.begin(), students.end(), [](const SinhVien& a, const SinhVien& b) {
+        return a.diemTB > b.diemTB;
+    });
+    cout << "Đã sắp xếp sinh viên theo Điểm trung bình giảm dần!\n";
+    printStudentsTable(students);
+}
+
+void filterStudentsByClassification(const vector<SinhVien> &students) {
+    if (students.empty()) return;
+    cout << "Chọn học lực (1. Giỏi, 2. Khá, 3. Trung bình, 4. Yếu): ";
+    int choice;
+    if (!(cin >> choice)) {
+        cin.clear(); cin.ignore(10000, '\n'); return;
+    }
+    cin.ignore(10000, '\n');
+    string target = "";
+    if (choice == 1) target = "Giỏi";
+    else if (choice == 2) target = "Khá";
+    else if (choice == 3) target = "Trung bình";
+    else if (choice == 4) target = "Yếu";
+    else return;
+    
+    vector<SinhVien> filtered;
+    for (const auto& s : students) {
+        if (s.hocLuc == target) filtered.push_back(s);
+    }
+    printStudentsTable(filtered);
+}
+
+void searchStudent(const vector<SinhVien> &students, const string& query) {
+    vector<SinhVien> results;
+    for (const auto& s : students) {
+        if (toLowerCase(s.MaSV).find(toLowerCase(query)) != string::npos ||
+            toLowerCase(s.HoTen).find(toLowerCase(query)) != string::npos) {
+            results.push_back(s);
+        }
+    }
+    printStudentsTable(results);
+}
+
+void displayStats(const vector<SinhVien> &students) {
+    if (students.empty()) return;
+    int countGioi = 0, countKha = 0, countTB = 0, countYeu = 0;
+    for (const auto& s : students) {
+        if (s.hocLuc == "Giỏi") countGioi++;
+        else if (s.hocLuc == "Khá") countKha++;
+        else if (s.hocLuc == "Trung bình") countTB++;
+        else countYeu++;
+    }
+    double total = students.size();
+    cout << "\n--- THỐNG KÊ HỌC LỰC ---\n";
+    cout << "Giỏi: " << countGioi << " (" << fixed << setprecision(2) << countGioi/total*100 << "%)\n";
+    cout << "Khá: " << countKha << " (" << countKha/total*100 << "%)\n";
+    cout << "Trung bình: " << countTB << " (" << countTB/total*100 << "%)\n";
+    cout << "Yếu: " << countYeu << " (" << countYeu/total*100 << "%)\n";
+    cout << "Tổng số sinh viên: " << students.size() << "\n";
+}
+
+void exportTop5Students(const vector<SinhVien> &students) {
+    vector<SinhVien> temp = students;
+    sort(temp.begin(), temp.end(), [](const SinhVien& a, const SinhVien& b) {
+        return a.diemTB > b.diemTB;
+    });
+    if (temp.size() > 5) temp.resize(5);
+    printStudentsTable(temp);
+}
+
+bool saveToCSV(const vector<SinhVien> &students, const string &filename) {
+    ofstream file(filename);
+    if (!file.is_open()) return false;
+    file << "MSSV,HoTen,NgaySinh,GioiTinh,DiaChi,MaLop,DiemTB,HocLuc\n";
+    for (const auto& s : students) {
+        file << escapeCSVField(s.MaSV) << "," << escapeCSVField(s.HoTen) << ","
+             << s.NgaySinh << "," << (s.GioiTinh ? "1" : "0") << ","
+             << escapeCSVField(s.DiaChi) << "," << escapeCSVField(s.MaLop) << ","
+             << s.diemTB << "," << escapeCSVField(s.hocLuc) << "\n";
+    }
+    file.close();
+    return true;
+}
+
+bool exportReport(const vector<SinhVien> &students, const string &filename) {
+    ofstream f(filename);
+    if (!f.is_open()) return false;
+    f << "BÁO CÁO DANH SÁCH SINH VIÊN\n";
+    f << "Thời gian xuất báo cáo: " << getCurrentDateTime() << "\n";
+    f << "Tổng số sinh viên: " << students.size() << "\n\n";
+    for (const auto& s : students) {
+        f << s.MaSV << " - " << s.HoTen << " - Điểm TB: " << fixed << setprecision(2) << s.diemTB << " (" << s.hocLuc << ")\n";
+    }
+    f.close();
+    return true;
+}================================\n";
     cout << "        HỆ THỐNG QUẢN LÝ SINH VIÊN           \n";
     cout << "=============================================\n";
     cout << " 1. Thêm sinh viên mới\n";

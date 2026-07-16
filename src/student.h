@@ -4,52 +4,42 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
-// Cấu trúc map trực tiếp với bảng LopHoc
 struct LopHoc {
-    string MaLop;
-    string TenLop;
-    string Khoa;
+    std::string MaLop;
+    std::string TenLop;
+    std::string Khoa;
 };
 
-// Cấu trúc map trực tiếp với bảng SinhVien và tích hợp điểm số
-struct SinhVien {
-    string MaSV;
-    string HoTen;
-    string NgaySinh;
-    bool GioiTinh; 
-    string DiaChi;
-    string MaLop;
-    // Thông tin điểm tổng quát
-    double diemTB = 0.0;
-    string hocLuc = "Yếu";
-};
-
-// Cấu trúc map trực tiếp với bảng MonHoc
 struct MonHoc {
-    string MaMH;
-    string TenMH;
+    std::string MaMH;
+    std::string TenMH;
     int SoTinChi;
 };
 
-// Cấu trúc map trực tiếp với bảng Diem
-struct Diem {
-    string MaSV;
-    string MaMH;
-    int LanThi;
-    double DiemSo;
+struct SinhVien {
+    std::string MaSV;
+    std::string HoTen;
+    std::string NgaySinh;
+    bool GioiTinh;
+    std::string DiaChi;
+    std::string MaLop;
+
+    double diemToan = 0.0;
+    double diemLy = 0.0;
+    double diemHoa = 0.0;
+    double diemTB = 0.0;
+    std::string hocLuc = "Yếu";
 };
 
-// (Giữ nguyên cấu trúc Student cũ nếu bạn vẫn muốn dùng cho việc tính GPA/Hiển thị)
-struct Student {
-    string id;
-    string name;
-    double diemToan;
-    double diemLy;
-    double diemHoa;
-    double diemTB;
-    string hocLuc;
-};
+// Các hàm xử lý giao diện/logic (không thay đổi gốc CSDL)
+std::string evaluateClassification(double gpa);
+void printStudentsTable(const std::vector<SinhVien> &students);
+void sortStudentsByGPA(std::vector<SinhVien> &students);
+void filterStudentsByClassification(const std::vector<SinhVien> &students);
+void searchStudent(const std::vector<SinhVien> &students, const std::string& query);
+void exportTop5Students(const std::vector<SinhVien> &students);
+void displayStats(const std::vector<SinhVien> &students);
+bool saveToCSV(const std::vector<SinhVien> &students, const std::string &filename);
+bool exportReport(const std::vector<SinhVien> &students, const std::string &filename);
 
 #endif
