@@ -48,6 +48,54 @@ bool Database::connect(const std::string& connectionString) {
     }
 }
 
+// Hàm đọc toàn bộ danh sách Sinh Viên từ SQL Server lên C++
+bool Database::loadSinhVien(std::vector<SinhVien>& students) {
+    if (!connected) return false;
+    students.clear();
+    
+    if (!SQL_SUCCEEDED(SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt))) return false;
+    
+    // Ép kiểu NgaySinh về chuỗi định dạng YYYY-MM-DD để C++ dễ đọc
+    std::string query = "SELECT MaSV, HoTen, CONVERT(VARCHAR, NgaySinh, 23), GioiTinh, DiaChi, MaLop FROM SinhVien";
+    SQLRETURN ret = SQLExecDirectA(hStmt, (SQLCHAR*)query.c_str(), SQL_NTS);
+    
+    if (!SQL_SUCCEEDED(ret)) {
+        SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
+        hStmt = SQL_NULL_HSTMT;
+        return false;
+    }
+    
+    // Các biến đệm để hứng dữ liệu từ SQL
+    char szMaSV[21], szHoTen[101], szNgaySinh[16], szDiaChi[256], szMaLop[21];
+    SQLCHAR cGioiTinh; 
+    SQLLEN cbMaSV, cbHoTen, cbNgaySinh, cbGioiTinh, cbDiaChi, cbMaLop;
+    
+    // Quét từng dòng dữ liệu trong SQL
+    while (SQLFetch(hStmt) == SQL_SUCCESS) {
+        SinhVien sv;
+        SQLGetData(hStmt, 1, SQL_C_CHAR, szMaSV, sizeof(szMaSV), &cbMaSV);
+        SQLGetData(hStmt, 2, SQL_C_CHAR, szHoTen, sizeof(szHoTen), &cbHoTen);
+        SQLGetData(hStmt, 3, SQL_C_CHAR, szNgaySinh, sizeof(szNgaySinh), &cbNgaySinh);
+        SQLGetData(hStmt, 4, SQL_C_BIT, &cGioiTinh, 0, &cbGioiTinh);
+        SQLGetData(hStmt, 5, SQL_C_CHAR, szDiaChi, sizeof(szDiaChi), &cbDiaChi);
+        SQLGetData(hStmt, 6, SQL_C_CHAR, szMaLop, sizeof(szMaLop), &cbMaLop);
+        
+        // Xử lý dữ liệu SQL trả về (nếu NULL thì gán mặc định)
+        sv.MaSV = (cbMaSV == SQL_NULL_DATA) ? "0" : szMaSV;
+        sv.HoTen = (cbHoTen == SQL_NULL_DATA) ? "0" : szHoTen;
+        sv.NgaySinh = (cbNgaySinh == SQL_NULL_DATA) ? "1900-01-01" : szNgaySinh;
+        sv.GioiTinh = (cGioiTinh != 0); // 1 = true, 0 = false
+        sv.DiaChi = (cbDiaChi == SQL_NULL_DATA) ? "0" : szDiaChi;
+        sv.MaLop = (cbMaLop == SQL_NULL_DATA) ? "0" : szMaLop;
+        
+        students.push_back(sv); // Đẩy vào danh sách RAM
+    }
+    
+    SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
+    hStmt = SQL_NULL_HSTMT;
+    return true;
+}
+
 // Hàm giải phóng bộ nhớ và ngắt kết nối an toàn
 void Database::disconnect() {
     if (hStmt != SQL_NULL_HSTMT) {

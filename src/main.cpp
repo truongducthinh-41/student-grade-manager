@@ -84,65 +84,69 @@ int main() {
             case 1:
                 {
                     cout << "\n--- CHỨC NĂNG: THÊM SINH VIÊN MỚI ---\n";
+                    cout << "(Lưu ý: Bỏ trống hoặc gõ 'none' sẽ tự động gán bằng '0')\n";
                     SinhVien sv;
                     
-                    // 1. Nhập Mã Số Sinh Viên
+                    // 1. Mã Sinh Viên
                     while (true) {
-                        cout << "[Nhập liệu] Nhập Mã số sinh viên (Enter hoặc 'none' để gán '0'): ";
+                        cout << "[Nhập] Mã số sinh viên: ";
                         getline(cin, sv.MaSV);
+                        
+                        // Xử lý luật Rỗng / None
                         if (sv.MaSV.empty() || sv.MaSV == "none") {
                             sv.MaSV = "0";
                         }
                         
+                        // Check trùng lặp
                         bool duplicate = false;
                         for (const auto& s : students) {
                             if (s.MaSV == sv.MaSV) { duplicate = true; break; }
                         }
                         if (duplicate) {
-                            cout << "[Lỗi] Mã SV '" << sv.MaSV << "' đã tồn tại! Vui lòng thử lại.\n";
+                            cout << "[Lỗi] Mã SV '" << sv.MaSV << "' đã tồn tại! Chọn mã khác.\n";
                         } else {
                             break;
                         }
                     }
                     
-                    // 2. Nhập Họ Tên
-                    cout << "[Nhập liệu] Nhập Họ và tên sinh viên (Enter hoặc 'none' để gán '0'): ";
+                    // 2. Họ Tên
+                    cout << "[Nhập] Họ và tên: ";
                     getline(cin, sv.HoTen);
                     if (sv.HoTen.empty() || sv.HoTen == "none") sv.HoTen = "0";
                     
-                    // 3. Nhập Ngày Sinh
-                    cout << "[Nhập liệu] Nhập Ngày sinh YYYY-MM-DD (Enter hoặc 'none' để gán '1900-01-01'): ";
+                    // 3. Ngày Sinh (Lưu ý định dạng DATE)
+                    cout << "[Nhập] Ngày sinh (YYYY-MM-DD): ";
                     getline(cin, sv.NgaySinh);
                     if (sv.NgaySinh.empty() || sv.NgaySinh == "none" || sv.NgaySinh == "0") {
-                        sv.NgaySinh = "1900-01-01"; // Ép kiểu ngày hợp lệ cho SQL Server
+                        sv.NgaySinh = "1900-01-01"; 
                     }
                     
-                    // 4. Nhập Giới Tính
-                    cout << "[Nhập liệu] Nhập Giới tính (1: Nam | 0: Nữ | Enter/none để gán 0): ";
+                    // 4. Giới Tính (BIT)
+                    cout << "[Nhập] Giới tính (1: Nam | 0: Nữ): ";
                     string genderStr;
                     getline(cin, genderStr);
                     if (genderStr.empty() || genderStr == "none" || genderStr == "0") {
-                        sv.GioiTinh = false; // 0
+                        sv.GioiTinh = false; // Mặc định Nữ (0)
                     } else {
-                        sv.GioiTinh = true;  // 1
+                        sv.GioiTinh = true;  // Nam (1)
                     }
                     
-                    // 5. Nhập Địa Chỉ
-                    cout << "[Nhập liệu] Nhập Địa chỉ nơi ở (Enter hoặc 'none' để gán '0'): ";
+                    // 5. Địa Chỉ
+                    cout << "[Nhập] Địa chỉ: ";
                     getline(cin, sv.DiaChi);
                     if (sv.DiaChi.empty() || sv.DiaChi == "none") sv.DiaChi = "0";
                     
-                    // 6. Nhập Mã Lớp
-                    cout << "[Nhập liệu] Nhập Mã lớp học (Enter hoặc 'none' để gán '0'): ";
+                    // 6. Mã Lớp
+                    cout << "[Nhập] Mã lớp học: ";
                     getline(cin, sv.MaLop);
                     if (sv.MaLop.empty() || sv.MaLop == "none") sv.MaLop = "0";
                     
-                    // Đẩy dữ liệu xuống Stored Procedure
+                    // Đẩy dữ liệu xuống SQL
                     if (db.insertSinhVien(sv)) {
-                        students.push_back(sv);
-                        cout << "[Thành công] Đã thêm mới sinh viên '" << sv.HoTen << "' vào CSDL!\n";
+                        students.push_back(sv); // Lưu vào RAM nếu SQL cho phép
+                        cout << "[Thành công] Đã thêm sinh viên '" << sv.HoTen << "' vào CSDL!\n";
                     } else {
-                        cout << "[Thất bại] SQL Server từ chối dữ liệu. (Lưu ý: Nếu bạn gán Mã Lớp = 0, bảng LopHoc của SQL Server phải có sẵn lớp mang mã '0').\n";
+                        cout << "[Thất bại] Lỗi lưu CSDL. (Chú ý: Nếu Mã Lớp là '0', bảng LopHoc phải có dòng mã '0' trước đó).\n";
                     }
                 }
                 break;
