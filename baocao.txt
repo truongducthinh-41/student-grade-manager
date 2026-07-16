@@ -1,0 +1,10 @@
+BÁO CÁO DANH SÁCH SINH VIÊN
+Tổng số sinh viên: 7
+
+SV001 - Nguyễn Văn An - Điểm TB: 8.50 (Giỏi)
+SV002 - Trần Thị Bình - Điểm TB: 7.00 (Khá)
+SV003 - Lê Hoàng Cường - Điểm TB: 9.00 (Giỏi)
+SV004 - Phạm Thị Dung - Điểm TB: 6.50 (Khá)
+SV005 - Phạm Đình Khải - Điểm TB: 0.00 (Yếu)
+SV006 - Trương Tiểu Vy - Điểm TB: 5.50 (Trung bình)
+SV007 - Đại Thục An - Điểm TB: 0.00 (Yếu)

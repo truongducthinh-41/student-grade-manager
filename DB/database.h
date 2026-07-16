@@ -22,9 +22,10 @@ public:
     void disconnect();
     
     bool loadSinhVien(std::vector<SinhVien>& students);
-    bool insertSinhVien(const SinhVien& s);
+    bool insertSinhVien(const SinhVien& s, bool silent = false);
     bool updateSinhVien(const SinhVien& s);
     bool deleteSinhVien(const std::string& maSV);
+    bool updateDiem(const std::string& maSV, const std::string& maMH, double diemSo);
     bool loadBaoCaoDiem(std::vector<string>& baoCaoList); 
 };
 

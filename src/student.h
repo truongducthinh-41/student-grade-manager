@@ -13,7 +13,7 @@ struct LopHoc {
     string Khoa;
 };
 
-// Cấu trúc map trực tiếp với bảng SinhVien
+// Cấu trúc map trực tiếp với bảng SinhVien và tích hợp điểm số
 struct SinhVien {
     string MaSV;
     string HoTen;
@@ -21,6 +21,9 @@ struct SinhVien {
     bool GioiTinh; 
     string DiaChi;
     string MaLop;
+    // Thông tin điểm tổng quát
+    double diemTB = 0.0;
+    string hocLuc = "Yếu";
 };
 
 // Cấu trúc map trực tiếp với bảng MonHoc
