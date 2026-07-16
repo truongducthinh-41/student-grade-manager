@@ -21,11 +21,11 @@ public:
     bool connect(const std::string& connectionString);
     void disconnect();
     
-    // Trong database.h
     bool loadSinhVien(std::vector<SinhVien>& students);
     bool insertSinhVien(const SinhVien& s);
     bool updateSinhVien(const SinhVien& s);
     bool deleteSinhVien(const std::string& maSV);
+    bool loadBaoCaoDiem(std::vector<string>& baoCaoList); 
 };
 
 #endif

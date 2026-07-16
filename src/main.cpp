@@ -46,8 +46,8 @@ int main() {
     Database db;
     
     // Chuỗi kết nối đến SQL Server sử dụng Windows Authentication
-    string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEXPRESS;DATABASE=StudentGradeManager;Trusted_Connection=yes;";
-    
+    // Thay DATABASE=StudentGradeManager thành DATABASE=QuanLyDiemSinhVien
+string connStr = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEXPRESS;DATABASE=QuanLyDiemSinhVien;Trusted_Connection=yes;";
     cout << "[Hệ thống] Đang kết nối tới cơ sở dữ liệu SQL Server...\n";
     if (db.connect(connStr)) {
         cout << "[Hệ thống] Kết nối SQL Server thành công!\n";
