@@ -111,7 +111,7 @@ bool Database::insertSinhVien(const SinhVien& s) {
         return false;
     }
     
-
+    // Gọi Stored Procedure: sp_ThemSinhVien
     std::string query = "EXEC sp_ThemSinhVien '" + s.MaSV + "', N'" + s.HoTen + "', '" + 
                         s.NgaySinh + "', " + (s.GioiTinh ? "1" : "0") + ", N'" + 
                         s.DiaChi + "', '" + s.MaLop + "'";
@@ -123,7 +123,7 @@ bool Database::insertSinhVien(const SinhVien& s) {
     return SQL_SUCCEEDED(ret);
 }
 
-// Hàm cập nhật thông tin sinh viên dựa trên MaSV
+// Hàm cập nhật thông tin sinh viên 
 bool Database::updateSinhVien(const SinhVien& s) {
     if (!connected) return false;
     
@@ -145,7 +145,7 @@ bool Database::updateSinhVien(const SinhVien& s) {
     return SQL_SUCCEEDED(ret);
 }
 
-// Hàm xóa một sinh viên khỏi bảng dựa trên MaSV truyền vào
+// Hàm xóa sinh viên sử dụng Stored Procedure (Xóa điểm trước, xóa SV sau)
 bool Database::deleteSinhVien(const std::string& maSV) {
     if (!connected) return false;
     
@@ -153,7 +153,7 @@ bool Database::deleteSinhVien(const std::string& maSV) {
         return false;
     }
     
-    // Gọi Stored Procedure: sp_XoaSinhVien để tự động xóa Cascading
+    // Gọi Stored Procedure: sp_XoaSinhVien 
     std::string query = "EXEC sp_XoaSinhVien '" + maSV + "'";
     SQLRETURN ret = SQLExecDirectA(hStmt, (SQLCHAR*)query.c_str(), SQL_NTS);
     
